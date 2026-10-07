@@ -6,13 +6,13 @@ document.addEventListener('touchmove',preventCoverScroll,{passive:false});docume
 if(!document.body.classList.contains('entered'))window.scrollTo(0,0);
 function toast(message){const el=document.querySelector('.toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000)}
 let musicState='idle',playPending=false,wantsMusic=false;
-const musicSource=audio.canPlayType('audio/mp4; codecs="mp4a.40.2"')?'https://wedding-music-1501189482.cos.ap-nanjing.myqcloud.com/lagou-cos.m4a':'https://kerowh.github.io/wanghailitong/assets/audio/lagou-mobile.mp3';
+const musicSource=audio.canPlayType('audio/mp4; codecs="mp4a.40.2"')?'https://wedding-music-1501189482.cos.ap-nanjing.myqcloud.com/10000-hours.m4a':'https://wedding-music-1501189482.cos.ap-nanjing.myqcloud.com/10000-hours.mp3';
 audio.preload='auto';audio.src=musicSource;audio.muted=false;audio.volume=1;audio.load();
 function syncMusic(){const playing=musicState==='playing'&&!audio.paused;music.classList.toggle('playing',playing);music.setAttribute('aria-pressed',String(playing));music.setAttribute('aria-label',playing?'暂停背景音乐':'播放背景音乐');music.querySelector('span').textContent=playing?'暂停':musicState==='loading'?'加载中':'音乐'}
 function playMusic(notify=false){wantsMusic=true;if(userPaused||playPending)return;playPending=true;musicState='loading';syncMusic();let result;try{result=audio.play()}catch(error){failed(error);return}Promise.resolve(result).then(()=>{playPending=false;musicState='playing';syncMusic()}).catch(failed);function failed(error){playPending=false;musicState='idle';syncMusic();if(notify)toast(error.name==='NotAllowedError'?'请轻触右上角音乐按钮开始播放':'音乐暂未播放，请轻触右上角重试')}}
 audio.addEventListener('playing',()=>{musicState='playing';syncMusic()});audio.addEventListener('waiting',()=>{musicState='loading';syncMusic()});audio.addEventListener('pause',()=>{musicState='idle';syncMusic()});
 audio.addEventListener('canplay',()=>{if(wantsMusic&&!userPaused&&audio.paused)playMusic()});
-audio.addEventListener('error',()=>{playPending=false;musicState='idle';syncMusic();if(!audio.src.includes('lagou-mobile.mp3')){audio.src='https://kerowh.github.io/wanghailitong/assets/audio/lagou-mobile.mp3';audio.load();if(wantsMusic&&!userPaused)playMusic(true)}else toast('音乐加载失败，请轻触音乐按钮重试')});
+audio.addEventListener('error',()=>{playPending=false;musicState='idle';syncMusic();if(!audio.src.includes('lagou-mobile.mp3')){audio.src='https://wedding-music-1501189482.cos.ap-nanjing.myqcloud.com/10000-hours.mp3';audio.load();if(wantsMusic&&!userPaused)playMusic(true)}else toast('音乐加载失败，请轻触音乐按钮重试')});
 music.addEventListener('click',()=>{if(wantsMusic&&!audio.paused){userPaused=true;wantsMusic=false;audio.pause()}else{userPaused=false;if(audio.error){audio.load();playPending=false}playMusic(true)}});
 // Invoke playback directly in the mobile gesture before the entrance animation.
 enter.addEventListener('touchend',()=>{userPaused=false;playMusic(true)},{passive:true});
